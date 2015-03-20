@@ -1,0 +1,11 @@
+group MiniScala;
+
+int_lit(x) ::= << IntConstant(<x>) >>
+boolean_lit(x) ::= << BooleanConstant(<x>) >>
+string_lit(x) ::= << StringConstant(<x>) >>
+id(x) ::= << Id("<x>") >>
+dot_exp(left,right) ::= << DotExpression(<left>,<right>) >>
+typ_lit(t) ::= << Typ(t) >>
+var_dec(name,typ,exp) ::= << VarDec("<name>",<typ>,<exp>) >>
+val_dec(name,typ,exp) ::= << ValDec("<name>",<typ>,<exp>) >>
+apply_exp() ::= <<apply exp>>

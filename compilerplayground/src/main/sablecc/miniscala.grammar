@@ -1,0 +1,96 @@
+Package com.joshcough.miniscala;
+
+Helpers
+letter = (['a'..'z']|['A'..'Z']);
+
+
+Tokens
+id = letter+;
+number = ['0' .. '9']+;
+boolean = 'true' | 'false';
+clazz = 'class';
+object = 'object';
+val = 'val';
+var = 'var';
+extends = 'extends';
+type = 'type';
+new = 'new';
+this = 'this';
+def = 'def';
+dot = '.';
+equals='=';
+semi=';';
+left_curly='{';
+left_par='(';
+left_bracket='[';
+right_curly='}';
+right_paren=')';
+right_bracket=']';
+backslash='\\';
+percent='%';
+carrot='^';
+tilde='~';
+colon=':';
+comma=',';
+string_lit = '"' letter* '"';
+blank = (' ' | 13 | 10)+;
+
+Ignored Tokens
+blank;
+
+Productions
+  miniscala = top_level_construct*;
+
+  top_level_construct =
+    {class_def} class_def |
+    {object_def} object_def;
+
+  class_def = clazz id formal_params? extender? class_body?;
+  class_body = block;
+
+  formal_params = left_par formal_param right_paren; 
+  formal_param = id colon type_name;
+
+  object_def = object id extender block?;
+
+  extender = extends id params?;
+
+  params = left_par  right_paren; /** expression_list **/ 
+  expression_list = expression expression_list_rest*;
+  expression_list_rest = comma expression;
+
+  type_name = id;
+
+  statement =
+    {val_dec} val_dec |
+    {var_dec} var_dec |
+    {class_def} class_def |
+    {object_def} object_def |
+    {method_def} method_def |
+    {exp} expression;
+
+  statements = statement*;
+
+  val_dec = val id return_type? equals expression; 
+  var_dec = var id return_type? equals expression;
+
+  return_type = colon type_name;
+
+  method_def = def id formal_params? return_type? equals expression;
+
+  expression =
+    {block} block |
+    {dot_expression} dot_expression |
+    {apply_expression} expression params;
+
+
+  block = left_bracket right_bracket;
+
+  dot_expression = [left]:expression dot [right]:expression;
+
+  primitive =
+    {number} number |
+    {boolean} boolean |
+    {string_lit} string_lit |
+    {id} id |
+    {this} this ;

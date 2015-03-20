@@ -1,0 +1,117 @@
+<project name="CPUBottomUp" default="all">
+
+  <property name="src.dir" value="${basedir}/src/main/scala"/>
+  <property name="test.src.dir" value="${basedir}/src/test/scala"/>
+  <property name="build.dir" value="${basedir}/target"/>
+  <property name="lib.dir" value="${basedir}/lib"/>
+  <property name="reports.dir" value="${build.dir}/reports"/>
+  <property name="doc.dir" value="${build.dir}/doc"/>
+  <property name="scala.dir" value="/usr/local/scala/scala-2.7.3.final"/>
+
+  <target name="all" depends="findbugs, run-tests"/>
+
+  <target name="init" depends="clean">
+    <property name="scala-library.jar" value="${scala.dir}/lib/scala-library.jar"/>
+    <property name="scala-compiler.jar" value="${scala.dir}/lib/scala-compiler.jar"/>
+
+    <path id="build.classpath">
+      <fileset dir="${lib.dir}">
+        <include name="*.jar"/>
+      </fileset>
+    </path>
+
+    <path id="test.run.classpath">
+      <fileset dir="${lib.dir}">
+        <include name="*.jar"/>
+      </fileset>
+      <fileset dir="${build.dir}">
+        <include name="**/*"/>
+      </fileset>
+    </path>
+
+    <taskdef resource="scala/tools/ant/antlib.xml">
+      <classpath>
+        <pathelement location="${scala-compiler.jar}"/>
+        <pathelement location="${scala-library.jar}"/>
+      </classpath>
+    </taskdef>
+
+  </target>
+
+  <target name="clean">
+    <delete dir="${build.dir}"/>
+    <delete dir="${reports.dir}"/>
+  </target>
+
+  <target name="compile" depends="init">
+    <mkdir dir="${build.dir}"/>
+    <scalac target="jvm-1.5"
+            srcdir="${src.dir}"
+            destdir="${build.dir}"
+            classpathref="build.classpath"
+            force="changed"
+        >
+      <include name="**/*.scala"/>
+    </scalac>
+    <scalac srcdir="${test.src.dir}"
+            destdir="${build.dir}"
+            classpathref="build.classpath"
+            force="changed"
+            target="jvm-1.5">
+      <include name="**/*.scala"/>
+    </scalac>
+    <jar destfile="${build.dir}/Test.jar" basedir="${build.dir}" includes="**/*.class"/>
+  </target>
+
+
+  <taskdef resource="testngtasks" classpath="${lib.dir}/testng-5.6-jdk15.jar"/>
+
+  <target name="run-tests" depends="compile">
+    <path id="test.classpath">
+      <fileset dir="${lib.dir}">
+        <include name="*.jar"/>
+      </fileset>
+      <fileset dir="${build.dir}">
+        <include name="Test.jar"/>
+      </fileset>
+    </path>
+    <testng classpathref="test.classpath" outputDir="${reports.dir}" haltOnfailure="true">
+      <classfileset dir="${build.dir}" includes="**/${testclass}*.class"/>
+      <sysproperty id="letters" value="${letters}" key="letters"/>
+    </testng>
+  </target>
+
+
+  <property name="findbugs.home" value="${basedir}/lib/findbugs-1.3.1"/>
+  <property name="findbugs.lib" value="${findbugs.home}/lib"/>
+  <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"
+           classpath="${findbugs.lib}/findbugs-ant.jar"/>
+
+  <target name="findbugs" depends="compile">
+    <findbugs home="${findbugs.home}"
+              output="html"
+              outputFile="${build.dir}/findbugs.html" jvmargs="-Xmx512m">
+      <auxClasspath>
+        <fileset dir="${lib.dir}">
+          <include name="*.jar"/>
+        </fileset>
+      </auxClasspath>
+      <sourcePath path="${src.dir}"/>
+      <class location="${build.dir}"/>
+    </findbugs>
+    <!--<style in="${build.dir}/findbugs.xml"
+                   out="${build.dir}/findbugs.html"
+                   style="${findbugs.home}/src/xsl/fancy.xsl"
+            />-->
+  </target>
+
+  <target name="doc" depends="init">
+    <mkdir dir="${doc.dir}"/>
+    <scaladoc srcdir="${src.dir}" destdir="${doc.dir}" classpathref="build.classpath"
+              windowtitle="Scala CPU Simulator" doctitle="Scala CPU Simulator">
+      <include name="**/*.scala"/>
+    </scaladoc>
+  </target>
+
+
+</project>

@@ -1,0 +1,10 @@
+import com.joshcough.tmorris._
+import com.joshcough.tmorris.Exercises._
+val seven = Succ(Succ(Succ(Succ(Succ(Succ(Succ(Zero)))))))
+val one = Succ(Zero)
+val two = add(one, one)
+val three = add(two, one)
+val ten = add(three, seven)
+
+val list = Cons("a", Cons( "b", Cons( "c", Cons( "d", Cons( "e", Cons( "f", Empty ))))))
+ 

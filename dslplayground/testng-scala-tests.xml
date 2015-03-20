@@ -1,0 +1,11 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="CPU Bottom Up Scala TestNG Unit Tests">
+  <test verbose="10" name="com.joshcough.cpu.electric" annotations="JDK">
+    <packages>
+      <package name="com.joshcough.cpu.electric"/>
+      <package name="com.joshcough.cpu.gates"/>
+      <package name="com.joshcough.cpu.alu"/>
+      <package name="com.joshcough.cpu.memory"/>
+    </packages>
+  </test>
+</suite>

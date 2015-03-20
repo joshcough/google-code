@@ -1,0 +1,6 @@
+class Hey(z:Int, a:Bool) {
+  def goo(y:Int) = {
+    val aa = 5557777
+    new Hey().goo()
+  }
+}
